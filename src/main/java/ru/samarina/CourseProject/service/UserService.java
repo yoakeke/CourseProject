@@ -2,6 +2,7 @@ package ru.samarina.CourseProject.service;
 
 import org.springframework.stereotype.Service;
 import ru.samarina.CourseProject.dto.UserDto;
+import ru.samarina.CourseProject.entity.Role;
 import ru.samarina.CourseProject.entity.User;
 
 import java.util.List;
@@ -15,5 +16,6 @@ public interface UserService {
     User findUserByEmail(String email);
 
     List<UserDto> findAllUsers();
-
 }
+
+

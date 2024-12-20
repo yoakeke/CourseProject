@@ -1,13 +1,16 @@
 package ru.samarina.CourseProject.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.samarina.CourseProject.entity.Book;
 
 import java.util.List;
+
 
 @Getter
 @Setter
@@ -15,17 +18,15 @@ import java.util.List;
 @NoArgsConstructor
 public class BookDto {
 
+    @NotNull(message = "bookId should not be empty.")
     private Long id;
 
     @NotEmpty(message = "Title should not be empty.")
     private String title;
 
     @NotEmpty(message = "Author should not be empty.")
-    private String author; // Автор книги
+    private String author;
 
-    @Positive(message = "Quantity should be a positive number.")
-    private Integer quantity; // Количество книги
-
-    private List<BookStoreInfoDto> bookStoreInfos; // Список информации о ценах и количестве в магазинах
+    private List<BookStoreDto> stores;
 
 }

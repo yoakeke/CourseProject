@@ -1,13 +1,11 @@
 package ru.samarina.CourseProject.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.samarina.CourseProject.dto.BookDto;
-import ru.samarina.CourseProject.dto.BookStoreInfoDto;
 import ru.samarina.CourseProject.entity.Book;
-import ru.samarina.CourseProject.entity.BookStoreInfo;
 import ru.samarina.CourseProject.repository.BookRepository;
-import ru.samarina.CourseProject.repository.BookStoreInfoRepository;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,75 +14,58 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final BookStoreInfoRepository bookStoreInfoRepository;
 
-    public BookServiceImpl(BookRepository bookRepository, BookStoreInfoRepository bookStoreInfoRepository) {
+    @Autowired
+    public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        this.bookStoreInfoRepository = bookStoreInfoRepository;
     }
 
     @Override
     public List<BookDto> findAllBooks() {
-        return bookRepository.findAll().stream()
-                .map(book -> mapToBookDto(book))
+        // Получаем все книги
+        List<Book> books = bookRepository.findAll();
+
+        // Преобразуем книги в BookDto
+        return books.stream()
+                .map(book -> new BookDto(book.getId(), book.getTitle(), book.getAuthor(), null)) // Преобразуем в DTO
                 .collect(Collectors.toList());
     }
 
     @Override
-    public BookDto findBookById(Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
-        return mapToBookDto(book);
-    }
-
-    @Override
-    public void saveBook(BookDto bookDto) {
-        Book book = mapToBook(bookDto);
-        bookRepository.save(book);
-    }
-
-    @Override
-    public List<BookStoreInfoDto> findBookStores(Long bookId) {
-        List<BookStoreInfo> bookStoreInfos = bookStoreInfoRepository.findByBookId(bookId);
-        return bookStoreInfos.stream()
-                .map(this::mapToBookStoreInfoDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void updateBookStoreInfo(BookStoreInfoDto bookStoreInfoDto) {
-        BookStoreInfo bookStoreInfo = bookStoreInfoRepository.findByBookIdAndStoreId(
-                bookStoreInfoDto.getBookId(),
-                bookStoreInfoDto.getStoreId()
-        ).orElseThrow(() -> new RuntimeException("BookStoreInfo not found"));
-
-        bookStoreInfo.setPrice(bookStoreInfoDto.getPrice());
-        bookStoreInfo.setQuantity(bookStoreInfoDto.getQuantity());
-        bookStoreInfoRepository.save(bookStoreInfo);
-    }
-
-    private BookDto mapToBookDto(Book book) {
-        BookDto bookDto = new BookDto();
-        bookDto.setId(book.getId());
-        bookDto.setTitle(book.getTitle());
-        bookDto.setAuthor(book.getAuthor());
-        return bookDto;
-    }
-
-    private Book mapToBook(BookDto bookDto) {
+    public BookDto addBook(BookDto bookDto) {
+        // Преобразуем BookDto в сущность Book
         Book book = new Book();
-        book.setId(bookDto.getId());
         book.setTitle(bookDto.getTitle());
         book.setAuthor(bookDto.getAuthor());
-        return book;
+
+        // Сохраняем книгу в базе данных
+        Book savedBook = bookRepository.save(book);
+
+        // Возвращаем BookDto с ID созданной книги
+        return new BookDto(savedBook.getId(), savedBook.getTitle(), savedBook.getAuthor(), null);
     }
 
-    private BookStoreInfoDto mapToBookStoreInfoDto(BookStoreInfo bookStoreInfo) {
-        return new BookStoreInfoDto(
-                        bookStoreInfo.getBook().getId(),
-                        bookStoreInfo.getStore().getId(),
-                bookStoreInfo.getQuantity(),
-                bookStoreInfo.getPrice()
-                );
+    @Override
+    public BookDto updateBook(Long id, BookDto bookDto) {
+        // Находим существующую книгу
+        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+
+        // Обновляем данные
+        book.setTitle(bookDto.getTitle());
+        book.setAuthor(bookDto.getAuthor());
+
+        // Сохраняем обновленные данные
+        Book updatedBook = bookRepository.save(book);
+
+        // Возвращаем обновленные данные в DTO
+        return new BookDto(updatedBook.getId(), updatedBook.getTitle(), updatedBook.getAuthor(), null);
+    }
+
+    @Override
+    public void deleteBook(Long id) {
+        // Проверяем существование книги
+        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        // Удаляем книгу
+        bookRepository.delete(book);
     }
 }

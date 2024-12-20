@@ -1,10 +1,16 @@
 package ru.samarina.CourseProject.dto;
 
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.samarina.CourseProject.entity.Book;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,11 +18,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class StoreDto {
 
+    @NotEmpty(message = "storeId should not be empty.")
     private Long id;
 
     @NotEmpty(message = "Name should not be empty.")
-    private String Name;
+    private String name;
 
-    @NotEmpty(message = "Address should not be empty.")
-    private String address;
+    private List<BookStoreDto> books;
+
 }

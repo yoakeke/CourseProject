@@ -9,19 +9,24 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "stores")
 public class Store {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BookStoreInfo> books = new ArrayList<>(); // Список информации о ценах и количестве книг в магазине
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<BookStore> bookStores = new ArrayList<>(); // Также используем List
+
+
 }

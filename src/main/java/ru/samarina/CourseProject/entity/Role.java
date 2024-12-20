@@ -1,11 +1,11 @@
 package ru.samarina.CourseProject.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,5 +23,8 @@ public class Role {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @ManyToMany(mappedBy = "roles")
+    private List<User> users = new ArrayList<>();
 
 }

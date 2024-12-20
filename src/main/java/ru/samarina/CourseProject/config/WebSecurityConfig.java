@@ -23,6 +23,7 @@ public class WebSecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register/**").permitAll()
+                        .requestMatchers("/list-book").permitAll()
                         .requestMatchers("/index").permitAll()
                         .requestMatchers("/users").hasRole("ADMIN")
                         .anyRequest().permitAll())
@@ -30,7 +31,7 @@ public class WebSecurityConfig {
                         form -> form
                                 .loginPage("/login")
                                 .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/users")
+                                .defaultSuccessUrl("/index")
                                 .permitAll()
                 ).logout(
                         logout -> logout

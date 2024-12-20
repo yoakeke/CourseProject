@@ -1,0 +1,53 @@
+<!-- header.html -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Header</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div th:fragment="header">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" th:href="@{/index}">Book Tracker</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav flex-sm-row ms-auto">
+          <!-- Admin Menu -->
+          <div class="navbar-nav" sec:authorize="hasRole('ADMIN')">
+            <a class="nav-item nav-link active" th:href="@{/users}">Users</a>
+          </div>
+          <!-- Common Menu for Authenticated Users -->
+          <div class="navbar-nav" sec:authorize="isAuthenticated()">
+            <a class="nav-item nav-link active" th:href="@{/list-book}">Books List</a>
+          </div>
+          <!-- Login/Register for Non-authenticated Users -->
+          <div class="navbar-nav" sec:authorize="!isAuthenticated()">
+            <a class="nav-item nav-link active" th:href="@{/login}">Login</a>
+            <a class="nav-item nav-link active" th:href="@{/register}">Register</a>
+          </div>
+
+          <!-- User Profile Dropdown for Authenticated Users -->
+          <div class="navbar-nav dropdown" sec:authorize="isAuthenticated()">
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${#authentication.principal.getUsername()}">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" th:href="@{/account}">Account</a></li>
+              <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- Bootstrap JS and Popper.js for dropdown functionality -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gybB5Gq5k5Ro/SMw7CmDA6j6CmOQ9OmO+5Jb1TtQ5M6okVj+LJ" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0txVJvHb3rBiW0b2+BoJlrfkYf8PpOen+WzNnJ/xcJFx16vj" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -1,7 +1,6 @@
 package ru.samarina.CourseProject.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class BookStoreInfo {
+@Table(name = "book_store")
+public class BookStore {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,16 +20,16 @@ public class BookStoreInfo {
 
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
-    private Book book; // Связь с книгой
+    private Book book;
 
     @ManyToOne
     @JoinColumn(name = "store_id", nullable = false)
-    private Store store; // Связь с магазином
+    private Store store;
 
-    @Positive(message = "Quantity should be a positive number.")
-    private Integer quantity; // Количество книги в магазине
+    @Column(nullable = false)
+    private Double price;
 
-    @Positive(message = "Price should be a positive number.")
-    private Double price; // Цена книги в магазине
+    @Column(nullable = false)
+    private Integer quantity;
 
 }
