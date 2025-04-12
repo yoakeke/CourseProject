@@ -14,54 +14,37 @@ public class StoreServiceImpl implements StoreService {
 
     private final StoreRepository storeRepository;
 
-    @Autowired
     public StoreServiceImpl(StoreRepository storeRepository) {
         this.storeRepository = storeRepository;
     }
 
     @Override
-    public List<StoreDto> getAllStores() {
-        // Получаем все магазины
-        List<Store> stores = storeRepository.findAll();
-        // Преобразуем магазины в StoreDto
-        return stores.stream()
-                .map(store -> new StoreDto(store.getId(), store.getName(), null)) // Если вам нужно больше данных, можно добавлять
-                .collect(Collectors.toList());
+    public List<Store> getAllStores() {
+        return storeRepository.findAll();
     }
 
     @Override
-    public StoreDto addStore(StoreDto storeDto) {
-        // Преобразуем StoreDto в сущность Store
-        Store store = new Store();
-        store.setName(storeDto.getName());
-
-        // Сохраняем магазин в базе данных
-        Store savedStore = storeRepository.save(store);
-
-        // Возвращаем StoreDto с ID созданного магазина
-        return new StoreDto(savedStore.getId(), savedStore.getName(), null);
-    }
-
-    @Override
-    public StoreDto updateStore(Long id, StoreDto storeDto) {
-        // Находим существующий магазин
-        Store store = storeRepository.findById(id).orElseThrow(() -> new RuntimeException("Store not found"));
-
-        // Обновляем данные
-        store.setName(storeDto.getName());
-
-        // Сохраняем обновленные данные
-        Store updatedStore = storeRepository.save(store);
-
-        // Возвращаем обновленные данные в DTO
-        return new StoreDto(updatedStore.getId(), updatedStore.getName(), null);
+    public void addStore(Store store) {
+        storeRepository.save(store);
     }
 
     @Override
     public void deleteStore(Long id) {
-        // Проверяем существование магазина
-        Store store = storeRepository.findById(id).orElseThrow(() -> new RuntimeException("Store not found"));
-        // Удаляем магазин
-        storeRepository.delete(store);
+        storeRepository.deleteById(id);
+    }
+
+    @Override
+    public Store getStoreById(Long id) {
+        return storeRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void updateStore(Store store) {
+        storeRepository.save(store);
+    }
+
+    @Override
+    public List<Store> searchStores(String keyword) {
+        return storeRepository.findByNameContainingIgnoreCase(keyword);
     }
 }

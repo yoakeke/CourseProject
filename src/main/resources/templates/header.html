@@ -19,10 +19,14 @@
           <!-- Admin Menu -->
           <div class="navbar-nav" sec:authorize="hasRole('ADMIN')">
             <a class="nav-item nav-link active" th:href="@{/users}">Users</a>
+            <a class="nav-item nav-link active" th:href="@{/stores}">Stores</a>
           </div>
           <!-- Common Menu for Authenticated Users -->
           <div class="navbar-nav" sec:authorize="isAuthenticated()">
             <a class="nav-item nav-link active" th:href="@{/list-book}">Books List</a>
+          </div>
+          <div class="navbar-nav" sec:authorize="hasRole('USER')">
+            <a class="nav-item nav-link active" th:href="@{/favorites}">Favorites</a>
           </div>
           <!-- Login/Register for Non-authenticated Users -->
           <div class="navbar-nav" sec:authorize="!isAuthenticated()">
@@ -35,7 +39,6 @@
             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" th:text="${#authentication.principal.getUsername()}">
             </a>
             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" th:href="@{/account}">Account</a></li>
               <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
             </ul>
           </div>

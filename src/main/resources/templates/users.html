@@ -10,17 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<div sec:authorize="hasRole('ROLE_ADMIN')">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" th:href="@{/index}">Book Tracker</a>
-            <div class="d-flex">
-                <a class="nav-link text-light" th:href="@{/index}">Home</a>
-                <a class="nav-link text-light" th:href="@{/books}">BookList</a>
-            </div>
-        </div>
-    </nav>
+<!-- Insert Header -->
+<div th:replace="~{header :: header}"></div> <!-- Подключение фрагмента header.html -->
 
+<div sec:authorize="hasRole('ROLE_ADMIN')">
     <div class="container mt-3">
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h2>User Management</h2>
@@ -40,12 +33,12 @@
             </thead>
             <tbody>
             <tr th:each="user : ${users}">
-                <td th:text="${user.firstName} + ' ' + ${user.lastName}"></td>
+                <td th:text="${user.firstName + ' ' + user.lastName}"></td>
                 <td th:text="${user.email}"></td>
                 <td>
                     <form th:action="@{/updateRole}" method="post">
                         <input type="hidden" name="userId" th:value="${user.id}" />
-                        <select name="roleName" class="form-select" onchange="this.form.submit()">
+                        <select name="role" class="form-select" onchange="this.form.submit()">
                             <option th:each="role : ${roles}"
                                     th:value="${role.name}"
                                     th:selected="${user.roles.contains(role)}"
@@ -85,26 +78,27 @@
                             <input type="email" class="form-control" id="email" name="email" required>
                         </div>
                         <div class="mb-3">
-                            <label for="role" class="form-label">Role</label>
-                            <select class="form-select" id="role" name="role">
+                            <select name="role" class="form-select" onchange="this.form.submit()">
                                 <option th:each="role : ${roles}"
                                         th:value="${role.name}"
-                                        th:text="${role.name}"></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                    </div>
-                </form>
+                                        th:text="${role.name}">
+                                <!--th:selected="${user.getRolesString().contains(role.name)}">-->
+                        </option>
+                    </select>
+                </div>
             </div>
-        </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+            </div>
+        </form>
     </div>
+</div>
+</div>
 </div>
 
 <div sec:authorize="!hasRole('ROLE_ADMIN')">
-    <h2 class="text-center text-danger mt-5">Access Denied. You must be an admin to access this page.</h2>
+<h2 class="text-center text-danger mt-5">Access Denied. You must be an admin to access this page.</h2>
 </div>
 </body>
 </html>

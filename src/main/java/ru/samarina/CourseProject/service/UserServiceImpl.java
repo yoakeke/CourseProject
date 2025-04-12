@@ -35,11 +35,11 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        Role role = roleRepository.findByName("ROLE_ADMIN");
+        Role role = roleRepository.findByName("USER");
         if (role == null) {
             role = checkRoleExist();
         }
-        user.setRoles(Arrays.asList(role));
+        user.setRoles(List.of(role));
         userRepository.save(user);
     }
 
@@ -52,16 +52,29 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map((user) -> mapToUserDto(user))
+                .map(this::mapToUserDto)
                 .collect(Collectors.toList());
     }
 
     private UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
         userDto.setFirstName(user.getFirstName());
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
+        userDto.setPassword(user.getPassword());
+        userDto.setRoles(user.getRoles());
         return userDto;
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void saveUserEntity(User user) {
+        userRepository.save(user);
     }
 
     private Role checkRoleExist() {

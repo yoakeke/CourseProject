@@ -1,12 +1,15 @@
 package ru.samarina.CourseProject.service;
 
 import ru.samarina.CourseProject.dto.StoreDto;
+import ru.samarina.CourseProject.entity.Store;
 
 import java.util.List;
 
 public interface StoreService {
-    List<StoreDto> getAllStores();
-    StoreDto addStore(StoreDto storeDto);
-    void deleteStore(Long storeId);
-    StoreDto updateStore(Long id, StoreDto storeDto);
+    List<Store> getAllStores();
+    void addStore(Store store);
+    void deleteStore(Long id);
+    Store getStoreById(Long id);
+    void updateStore(Store store);
+    List<Store> searchStores(String keyword);
 }

@@ -1,43 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Book List Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/index}">Book Tracker</a>
-        <div class="d-flex">
-            <!-- Navigation for admin -->
-            <div th:if="${mainUserRole == 'ADMIN'}">
-                <a class="nav-link text-light" th:href="@{/index}">Home</a>
-<!--                <a class="nav-link text-light" th:href="@{/list-book}">Book List</a>-->
-                <a class="nav-link text-light" th:href="@{/users}">User List</a>
-            </div>
-            <!-- Navigation for user -->
-            <div th:if="${mainUserRole == 'USER'}">
-                <a class="nav-link text-light" th:href="@{/index}">Home</a>
-<!--                <a class="nav-link text-light" th:href="@{/books}">Book List</a>-->
-                <a class="nav-link text-light" th:href="@{/favorites}">Favorites</a>
-            </div>
-            <!-- Navigation for read-only -->
-            <div th:if="${userRole == 'READ_ONLY'}">
-                <a class="nav-link text-light" th:href="@{/index}">Home</a>
-<!--                <a class="nav-link text-light" th:href="@{/books}">Book List</a>-->
-            </div>
-            <!-- Logout -->
-            <a class="nav-link text-light" th:href="@{/logout}">Logout</a>
-        </div>
-    </div>
-</nav>
+<!-- Insert Header -->
+<div th:replace="~{header :: header}"></div>
 
 <div class="container mt-3">
     <!-- Search form -->
@@ -48,8 +20,8 @@
 
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h2>Book List Management</h2>
-        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBookModal"
-                th:if="${userRole != 'READ_ONLY'}">
+        <!-- Only show "Add New Book" button for admins -->
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBookModal" sec:authorize="hasRole('ROLE_ADMIN')">
             Add New Book
         </button>
     </div>
@@ -61,7 +33,8 @@
             <th>Author</th>
             <th>Price</th>
             <th>Store</th>
-            <th th:if="${userRole != 'READ_ONLY'}">Actions</th>
+            <!-- Only show "Actions" column for non-read-only users -->
+            <th sec:authorize="!hasRole('READ_ONLY')">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -76,16 +49,17 @@
             <td>
                 <select class="form-select form-select-sm" data-book-id="${book.id}" onchange="updateBook(this, 'store')">
                     <option th:each="store : ${stores}" th:value="${store.name}" th:text="${store.name}"></option>
-                    <!-- Option to add a new store (optional) -->
                     <option value="Add New Store" class="text-muted">Add New Store</option>
                 </select>
             </td>
-            <td th:if="${userRole != 'READ_ONLY'}">
-                <div th:if="${userRole == 'ADMIN'}">
-                    <a th:href="@{/deleteBook(bookId=${book.id})}" class="btn btn-danger btn-sm"
-                       onclick="return confirm('Are you sure you want to delete this book?')">Delete</a>
+            <td>
+                <!-- Admin actions: Edit and Delete -->
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{/deleteBook(bookId=${book.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a>
+                    <a th:href="@{/editBook(bookId=${book.id})}" class="btn btn-warning btn-sm">Edit</a>
                 </div>
-                <div th:if="${userRole == 'USER'}">
+                <!-- User action: Add to My List -->
+                <div sec:authorize="hasRole('ROLE_USER')">
                     <a th:href="@{/addToList(bookId=${book.id})}" class="btn btn-success btn-sm">Add to My List</a>
                 </div>
             </td>
@@ -118,10 +92,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="store" class="form-label">Store</label>
-                        <select class="form-select" id="store" name="store" required>
+                        <select id="store" class="form-select form-select-sm">
                             <option th:each="store : ${stores}" th:value="${store.name}" th:text="${store.name}"></option>
-                            <!-- Option to add a new store -->
-                            <option value="Add New Store" class="text-muted">Add New Store</option>
                         </select>
                     </div>
                 </div>
@@ -148,5 +120,6 @@
             .catch(() => alert('Failed to update book'));
     }
 </script>
+
 </body>
 </html>

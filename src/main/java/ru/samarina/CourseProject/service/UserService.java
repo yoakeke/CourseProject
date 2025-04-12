@@ -12,9 +12,9 @@ import java.util.List;
 public interface UserService {
 
     void saveUser(UserDto userDto);
-
+    User findById(Long id);
     User findUserByEmail(String email);
-
+    void saveUserEntity(User user);
     List<UserDto> findAllUsers();
 }
 

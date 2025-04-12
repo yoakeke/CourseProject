@@ -7,8 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.samarina.CourseProject.entity.Role;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -31,5 +33,14 @@ public class UserDto {
     @NotEmpty(message = "Password should not be empty.")
     private String password;
 
-    private List<String> roles;
+    private List<Role> roles;
+
+    public String getRolesString() {
+        if (roles == null || roles.isEmpty()) {
+            return "";
+        }
+        return roles.stream()
+                .map(Role::getName)
+                .collect(Collectors.joining(", "));
+    }
 }
