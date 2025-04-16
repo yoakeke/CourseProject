@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 public class BookDto {
 
-    @NotNull(message = "bookId should not be empty.")
+    @NotNull(message = "Book ID should not be null.")
     private Long id;
 
     @NotEmpty(message = "Title should not be empty.")

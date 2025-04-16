@@ -3,8 +3,13 @@ package ru.samarina.CourseProject.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.samarina.CourseProject.dto.BookDto;
+import ru.samarina.CourseProject.dto.BookStoreDto;
 import ru.samarina.CourseProject.entity.Book;
+import ru.samarina.CourseProject.entity.BookStore;
+import ru.samarina.CourseProject.entity.Store;
 import ru.samarina.CourseProject.repository.BookRepository;
+import ru.samarina.CourseProject.repository.BookStoreRepository;
+import ru.samarina.CourseProject.repository.StoreRepository;
 
 
 import java.util.List;
@@ -19,18 +24,44 @@ public class BookServiceImpl implements BookService {
     public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
-
+    @Autowired
+    private BookStoreRepository bookStoreRepository;
+    @Autowired
+    private StoreRepository storeRepository;
     @Override
     public List<BookDto> findAllBooks() {
-        // Получаем все книги
         List<Book> books = bookRepository.findAll();
 
-        // Преобразуем книги в BookDto
-        return books.stream()
-                .map(book -> new BookDto(book.getId(), book.getTitle(), book.getAuthor(), null)) // Преобразуем в DTO
-                .collect(Collectors.toList());
+        return books.stream().map(book -> {
+            List<BookStoreDto> storeDtos = book.getBookStores().stream()
+                    .map(bs -> new BookStoreDto(
+                            bs.getStore().getId(),
+                            bs.getPrice(),
+                            bs.getQuantity()
+                    ))
+                    .collect(Collectors.toList());
+
+            return new BookDto(book.getId(), book.getTitle(), book.getAuthor(), storeDtos);
+        }).collect(Collectors.toList());
     }
 
+    @Override
+    public void addBookWithStore(String title, String author, Long storeId, Double price, Integer quantity) {
+        Book book = new Book();
+        book.setTitle(title);
+        book.setAuthor(author);
+        book = bookRepository.save(book); // сохраняем книгу
+
+        Store store = storeRepository.findById(storeId).orElseThrow(() -> new RuntimeException("Store not found"));
+
+        BookStore bookStore = new BookStore();
+        bookStore.setBook(book);
+        bookStore.setStore(store);
+        bookStore.setPrice(price);
+        bookStore.setQuantity(quantity);
+
+        bookStoreRepository.save(bookStore);
+    }
     @Override
     public BookDto addBook(BookDto bookDto) {
         // Преобразуем BookDto в сущность Book

@@ -29,7 +29,7 @@ public class StoreController {
         return "stores";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/addStore")
     public String addStore(@RequestParam String name) {
         storeService.addStore(Store.builder().name(name).build());
         return "redirect:/stores";

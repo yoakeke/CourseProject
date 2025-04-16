@@ -72,30 +72,49 @@
 <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form th:action="@{/addBook}" method="post">
+            <form th:action="@{/books/add}" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+
+                    <!-- Title -->
                     <div class="mb-3">
                         <label for="title" class="form-label">Title</label>
                         <input type="text" class="form-control" id="title" name="title" required>
                     </div>
+
+                    <!-- Author -->
                     <div class="mb-3">
                         <label for="author" class="form-label">Author</label>
                         <input type="text" class="form-control" id="author" name="author" required>
                     </div>
+
+                    <!-- Store -->
                     <div class="mb-3">
-                        <label for="price" class="form-label">Price</label>
-                        <input type="text" class="form-control" id="price" name="price" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="store" class="form-label">Store</label>
-                        <select id="store" class="form-select form-select-sm">
-                            <option th:each="store : ${stores}" th:value="${store.name}" th:text="${store.name}"></option>
+                        <label for="storeId" class="form-label">Store</label>
+                        <select class="form-select" id="storeId" name="storeId" required>
+                            <option value="" disabled selected>Select store</option>
+                            <option th:each="store : ${stores}"
+                                    th:value="${store.id}"
+                                    th:text="${store.name}">
+                            </option>
                         </select>
                     </div>
+
+                    <!-- Price -->
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                    </div>
+
+                    <!-- Quantity -->
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" required>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
@@ -105,6 +124,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
     function updateBook(element, fieldName) {

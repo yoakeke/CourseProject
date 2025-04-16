@@ -24,6 +24,6 @@ public class Store {
     private String name;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
-    private List<BookStore> bookStores = new ArrayList<>(); // Также используем List
+    private List<BookStore> bookStores = new ArrayList<>();
 
 }

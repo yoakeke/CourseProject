@@ -3,6 +3,7 @@ package ru.samarina.CourseProject.dto;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 public class StoreDto {
 
-    @NotEmpty(message = "storeId should not be empty.")
+    @NotNull(message = "Store ID should not be null.")
     private Long id;
 
     @NotEmpty(message = "Name should not be empty.")

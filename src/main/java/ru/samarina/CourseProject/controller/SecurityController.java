@@ -30,7 +30,7 @@ public class SecurityController {
     private BookService bookService;
     private RoleService roleService;
     private PasswordEncoder passwordEncoder;
-
+    @Autowired
     public SecurityController(UserService userService, BookService bookService, RoleService roleService) {
         this.userService = userService;
         this.bookService = bookService;
