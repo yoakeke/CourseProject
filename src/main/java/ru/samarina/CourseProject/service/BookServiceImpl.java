@@ -28,22 +28,25 @@ public class BookServiceImpl implements BookService {
     private BookStoreRepository bookStoreRepository;
     @Autowired
     private StoreRepository storeRepository;
+
     @Override
     public List<BookDto> findAllBooks() {
         List<Book> books = bookRepository.findAll();
 
         return books.stream().map(book -> {
-            List<BookStoreDto> storeDtos = book.getBookStores().stream()
-                    .map(bs -> new BookStoreDto(
-                            bs.getStore().getId(),
-                            bs.getPrice(),
-                            bs.getQuantity()
-                    ))
-                    .collect(Collectors.toList());
+            List<BookStoreDto> storeDtos = book.getBookStores().stream().map(bookStore -> {
+                BookStoreDto dto = new BookStoreDto();
+                dto.setStoreId(bookStore.getStore().getId());
+                dto.setStoreName(bookStore.getStore().getName()); // !! нужно добавить поле storeName в BookStoreDto
+                dto.setPrice(bookStore.getPrice());
+                dto.setQuantity(bookStore.getQuantity());
+                return dto;
+            }).collect(Collectors.toList());
 
             return new BookDto(book.getId(), book.getTitle(), book.getAuthor(), storeDtos);
         }).collect(Collectors.toList());
     }
+
 
     @Override
     public void addBookWithStore(String title, String author, Long storeId, Double price, Integer quantity) {
@@ -99,4 +102,29 @@ public class BookServiceImpl implements BookService {
         // Удаляем книгу
         bookRepository.delete(book);
     }
+
+    @Override
+    public List<BookDto> findAllBooksWithSelectedStore(Long selectedBookId, Long selectedStoreId) {
+        List<Book> books = bookRepository.findAll();
+
+        return books.stream().map(book -> {
+            List<BookStoreDto> storeDtos = book.getBookStores().stream().map(bs -> {
+                BookStoreDto dto = new BookStoreDto();
+                dto.setStoreId(bs.getStore().getId());
+                dto.setStoreName(bs.getStore().getName());
+                dto.setPrice(bs.getPrice());
+                dto.setQuantity(bs.getQuantity());
+                return dto;
+            }).collect(Collectors.toList());
+
+            BookDto bookDto = new BookDto();
+            bookDto.setId(book.getId());
+            bookDto.setTitle(book.getTitle());
+            bookDto.setAuthor(book.getAuthor());
+            bookDto.setStores(storeDtos);
+
+            return bookDto;
+        }).collect(Collectors.toList());
+    }
+
 }

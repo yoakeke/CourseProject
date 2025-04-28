@@ -23,7 +23,7 @@
           </div>
           <!-- Common Menu for Authenticated Users -->
           <div class="navbar-nav" sec:authorize="isAuthenticated()">
-            <a class="nav-item nav-link active" th:href="@{/list-book}">Books List</a>
+            <a class="nav-item nav-link active" th:href="@{books/list-book}">Books List</a>
           </div>
           <div class="navbar-nav" sec:authorize="hasRole('USER')">
             <a class="nav-item nav-link active" th:href="@{/favorites}">Favorites</a>

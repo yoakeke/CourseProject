@@ -11,5 +11,6 @@ public interface BookService {
     void deleteBook(Long Id);
     List<BookDto> findAllBooks();
     void addBookWithStore(String title, String author, Long storeId, Double price, Integer quantity);
+    List<BookDto> findAllBooksWithSelectedStore(Long selectedBookId, Long selectedStoreId);
 
 }

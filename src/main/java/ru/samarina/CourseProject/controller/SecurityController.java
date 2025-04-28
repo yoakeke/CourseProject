@@ -102,12 +102,7 @@ public class SecurityController {
     }
 
 
-    @GetMapping("/books")
-    public String listBooks(Model model) {
-        List<BookDto> books = bookService.findAllBooks();
-        model.addAttribute("books", books);
-        return "list-book";
-    }
+
 
     @PostMapping("/addUser")
     public String addUser(@RequestParam String firstName,
