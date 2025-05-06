@@ -16,6 +16,7 @@ public interface UserService {
     User findUserByEmail(String email);
     void saveUserEntity(User user);
     List<UserDto> findAllUsers();
+    void deleteUser(Long Id);
 }
 
 

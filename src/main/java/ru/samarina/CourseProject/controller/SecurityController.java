@@ -7,10 +7,7 @@ import org.springframework.ui.Model;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.samarina.CourseProject.dto.BookDto;
 import ru.samarina.CourseProject.dto.UserDto;
 import ru.samarina.CourseProject.entity.Role;
@@ -101,9 +98,6 @@ public class SecurityController {
         return "redirect:/users";
     }
 
-
-
-
     @PostMapping("/addUser")
     public String addUser(@RequestParam String firstName,
                           @RequestParam String lastName,
@@ -119,4 +113,11 @@ public class SecurityController {
         userService.saveUserEntity(user);
         return "redirect:/users";
     }
+
+    @PostMapping("/users/delete")
+    public String deleteUserPost(@RequestParam Long id) {
+        userService.deleteUser(id);
+        return "redirect:/users";
+    }
+
 }

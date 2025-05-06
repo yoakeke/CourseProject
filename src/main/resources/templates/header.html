@@ -16,20 +16,20 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="navbar-nav flex-sm-row ms-auto">
+          <a class="nav-item nav-link active" th:href="@{books/list-book}">Books List</a>
           <!-- Admin Menu -->
           <div class="navbar-nav" sec:authorize="hasRole('ADMIN')">
             <a class="nav-item nav-link active" th:href="@{/users}">Users</a>
             <a class="nav-item nav-link active" th:href="@{/stores}">Stores</a>
           </div>
-          <!-- Common Menu for Authenticated Users -->
-          <div class="navbar-nav" sec:authorize="isAuthenticated()">
-            <a class="nav-item nav-link active" th:href="@{books/list-book}">Books List</a>
-          </div>
+
+
           <div class="navbar-nav" sec:authorize="hasRole('USER')">
             <a class="nav-item nav-link active" th:href="@{/favorites}">Favorites</a>
           </div>
           <!-- Login/Register for Non-authenticated Users -->
           <div class="navbar-nav" sec:authorize="!isAuthenticated()">
+
             <a class="nav-item nav-link active" th:href="@{/login}">Login</a>
             <a class="nav-item nav-link active" th:href="@{/register}">Register</a>
           </div>

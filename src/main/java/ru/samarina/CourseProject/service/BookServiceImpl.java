@@ -47,6 +47,23 @@ public class BookServiceImpl implements BookService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public BookDto getBookById(Long id) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+
+        List<BookStoreDto> storeDtos = book.getBookStores().stream().map(bookStore -> {
+            BookStoreDto dto = new BookStoreDto();
+            dto.setStoreId(bookStore.getStore().getId());
+            dto.setStoreName(bookStore.getStore().getName());
+            dto.setPrice(bookStore.getPrice());
+            dto.setQuantity(bookStore.getQuantity());
+            return dto;
+        }).collect(Collectors.toList());
+
+        return new BookDto(book.getId(), book.getTitle(), book.getAuthor(), storeDtos);
+    }
+
+
 
     @Override
     public void addBookWithStore(String title, String author, Long storeId, Double price, Integer quantity) {
@@ -80,26 +97,34 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto updateBook(Long id, BookDto bookDto) {
-        // Находим существующую книгу
-        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
-
-        // Обновляем данные
+    public void updateBookWithStore(BookDto bookDto, Long storeId, Double price, Integer quantity) {
+        Book book = bookRepository.findById(bookDto.getId())
+                .orElseThrow(() -> new RuntimeException("Book not found"));
         book.setTitle(bookDto.getTitle());
         book.setAuthor(bookDto.getAuthor());
+        bookRepository.save(book);
 
-        // Сохраняем обновленные данные
-        Book updatedBook = bookRepository.save(book);
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new RuntimeException("Store not found"));
 
-        // Возвращаем обновленные данные в DTO
-        return new BookDto(updatedBook.getId(), updatedBook.getTitle(), updatedBook.getAuthor(), null);
+        // Ищем запись BookStore, если есть — обновим, если нет — создадим
+        BookStore bookStore = bookStoreRepository.findByBookIdAndStoreId(book.getId(), storeId)
+                .orElseGet(() -> {
+                    BookStore bs = new BookStore();
+                    bs.setBook(book);
+                    bs.setStore(store);
+                    return bs;
+                });
+
+        bookStore.setPrice(price);
+        bookStore.setQuantity(quantity);
+        bookStoreRepository.save(bookStore);
     }
+
 
     @Override
     public void deleteBook(Long id) {
-        // Проверяем существование книги
         Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
-        // Удаляем книгу
         bookRepository.delete(book);
     }
 

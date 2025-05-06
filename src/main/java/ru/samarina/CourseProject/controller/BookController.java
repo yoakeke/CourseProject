@@ -38,9 +38,32 @@ public class BookController {
         return "redirect:/books/list-book";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteBook(@PathVariable Long id) {
+//    @GetMapping("/deleteBook")
+//    public String deleteBook(@RequestParam Long bookId) {
+//        bookService.deleteBook(bookId);
+//        return "redirect:/books/list-book";
+//    }
+
+    @PostMapping("books/delete")
+    public String deleteBook(@RequestParam Long id) {
         bookService.deleteBook(id);
+        return "redirect:/books/list-book";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        BookDto book = bookService.getBookById(id);
+        model.addAttribute("book", book);
+        model.addAttribute("stores", storeService.getAllStores());
+        return "list-book";
+    }
+
+    @PostMapping("/edit")
+    public String editBook(@ModelAttribute BookDto book,
+                           @RequestParam Long storeId,
+                           @RequestParam Double price,
+                           @RequestParam Integer quantity) {
+        bookService.updateBookWithStore(book, storeId, price, quantity);
         return "redirect:/books/list-book";
     }
 
