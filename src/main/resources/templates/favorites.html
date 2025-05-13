@@ -1,31 +1,84 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>My Favorite Books</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
+<!-- Header -->
+<div th:replace="~{header :: header}"></div>
 
 <div class="container mt-3">
-    <h2>My Favorite Books</h2>
+    <h2 class="mb-3">My Favorite Books</h2>
 
     <table class="table table-bordered table-hover">
         <thead class="table-dark">
         <tr>
             <th>Title</th>
             <th>Author</th>
+            <th>Store</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="fav : ${favorites}">
-            <td th:text="${fav.book.title}"></td>
-            <td th:text="${fav.book.author}"></td>
+        <tr th:each="book : ${books}">
+        <td th:text="${book.title}"></td>
+            <td th:text="${book.author}"></td>
+
+            <td>
+                <select class="form-select form-select-sm"
+                        th:id="'storeSelect_' + ${book.id}"
+                        th:onchange="'updatePriceAndQuantity(' + ${book.id} + ')'">
+                    <option th:each="store : ${book.stores}"
+                            th:value="${store.storeId}"
+                            th:data-price="${store.price}"
+                            th:data-quantity="${store.quantity}"
+                            th:text="${store.storeName}">
+                    </option>
+                </select>
+            </td>
+
+            <td>
+                <span th:id="'price_' + ${book.id}"
+                      th:text="${#lists.isEmpty(book.stores) ? '—' : book.stores.get(0).price}"></span>
+            </td>
+
+            <td>
+                <span th:id="'quantity_' + ${book.id}"
+                      th:text="${#lists.isEmpty(book.stores) ? '—' : book.stores.get(0).quantity}"></span>
+            </td>
+
+            <td>
+                <form th:action="@{/books/favorites/remove}" method="post">
+                    <input type="hidden" name="bookId" th:value="${book.id}" />
+                    <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('Are you sure you want to remove this book from favorites?')">
+                        Remove
+                    </button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
 </div>
+
+<!-- Скрипт: обновление цены и количества при выборе магазина -->
+<script>
+    function updatePriceAndQuantity(bookId) {
+        const select = document.getElementById('storeSelect_' + bookId);
+        const selectedOption = select.options[select.selectedIndex];
+        const price = selectedOption.getAttribute('data-price');
+        const quantity = selectedOption.getAttribute('data-quantity');
+
+        document.getElementById('price_' + bookId).textContent = price || '—';
+        document.getElementById('quantity_' + bookId).textContent = quantity || '—';
+    }
+</script>
 
 </body>
 </html>

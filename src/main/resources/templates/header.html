@@ -16,7 +16,7 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="navbar-nav flex-sm-row ms-auto">
-          <a class="nav-item nav-link active" th:href="@{books/list-book}">Books List</a>
+          <a class="nav-item nav-link active" th:href="@{/books/list-book}">Books List</a>
           <!-- Admin Menu -->
           <div class="navbar-nav" sec:authorize="hasRole('ADMIN')">
             <a class="nav-item nav-link active" th:href="@{/users}">Users</a>
@@ -25,7 +25,7 @@
 
 
           <div class="navbar-nav" sec:authorize="hasRole('USER')">
-            <a class="nav-item nav-link active" th:href="@{/favorites}">Favorites</a>
+            <a class="nav-item nav-link active" th:href="@{/books/favorites}">Favorites</a>
           </div>
           <!-- Login/Register for Non-authenticated Users -->
           <div class="navbar-nav" sec:authorize="!isAuthenticated()">

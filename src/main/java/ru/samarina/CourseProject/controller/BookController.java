@@ -7,6 +7,7 @@ import ru.samarina.CourseProject.dto.BookDto;
 import ru.samarina.CourseProject.service.BookService;
 import ru.samarina.CourseProject.service.StoreService;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -22,9 +23,19 @@ public class BookController {
     }
 
     @GetMapping("/list-book")
-    public String listBooks(Model model) {
-        model.addAttribute("books", bookService.findAllBooks());
+    public String listBooks(Model model, Principal principal) {
+        String userEmail = (principal != null) ? principal.getName() : null;
+
+        List<BookDto> books = bookService.findAllBooks(userEmail);
+
+        model.addAttribute("books", books);
         model.addAttribute("stores", storeService.getAllStores());
+
+        // Добавляем пустой BookDto для формы добавления
+        BookDto emptyBookDto = new BookDto();
+        emptyBookDto.setInFavorite(false); // по умолчанию не в избранном
+        model.addAttribute("bookDto", emptyBookDto);
+
         return "list-book";
     }
 
@@ -38,11 +49,6 @@ public class BookController {
         return "redirect:/books/list-book";
     }
 
-//    @GetMapping("/deleteBook")
-//    public String deleteBook(@RequestParam Long bookId) {
-//        bookService.deleteBook(bookId);
-//        return "redirect:/books/list-book";
-//    }
 
     @PostMapping("books/delete")
     public String deleteBook(@RequestParam Long id) {
@@ -73,4 +79,28 @@ public class BookController {
         model.addAttribute("stores", storeService.getAllStores());
         return "list-book";
     }
+
+    // Добавить книгу в избранное
+    @PostMapping("/favorites/add")
+    public String addToFavorites(@RequestParam Long bookId, Principal principal) {
+        bookService.addBookToFavorites(bookId, principal.getName());
+        return "redirect:/books/list-book";
+    }
+
+    // Удалить книгу из избранного
+    @PostMapping("/favorites/remove")
+    public String removeFromFavorites(@RequestParam Long bookId, Principal principal) {
+        bookService.removeBookFromFavorites(bookId, principal.getName());
+        return "redirect:/books/favorites";
+    }
+
+    // Отображение страницы избранного
+    @GetMapping("/favorites")
+    public String viewFavorites(Model model, Principal principal) {
+        List<BookDto> favorites = bookService.getFavoriteBooks(principal.getName());
+        model.addAttribute("books", favorites);
+        return "favorites";
+    }
+
+
 }

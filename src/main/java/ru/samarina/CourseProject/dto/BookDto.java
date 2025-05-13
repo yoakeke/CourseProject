@@ -15,4 +15,5 @@ public class BookDto {
     private String title;
     private String author;
     private List<BookStoreDto> stores; // связи с магазинами (цена/количество по магазинам)
+    private boolean inFavorite;
 }

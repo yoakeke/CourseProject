@@ -88,7 +88,11 @@
                         </button>
                     </div>
                 <div sec:authorize="hasRole('ROLE_USER')">
-                    <a th:href="@{/addToList(bookId=${book.id})}" class="btn btn-success btn-sm">Add to My List</a>
+                    <form th:if="${!book.inFavorite}" th:action="@{/books/favorites/add}" method="post">
+                        <input type="hidden" name="bookId" th:value="${book.id}" />
+                        <button type="submit" class="btn btn-success btn-sm">Add to My List</button>
+                    </form>
+                    <span th:unless="${!book.inFavorite}" class="text-success fst-italic">In Favorites</span>
                 </div>
             </td>
         </tr>

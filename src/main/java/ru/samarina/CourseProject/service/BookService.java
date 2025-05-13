@@ -12,5 +12,11 @@ public interface BookService {
     List<BookDto> findAllBooks();
     void addBookWithStore(String title, String author, Long storeId, Double price, Integer quantity);
     List<BookDto> findAllBooksWithSelectedStore(Long selectedBookId, Long selectedStoreId);
+
+    List<BookDto> findAllBooks(String userEmail);
+
     BookDto getBookById(Long id);
+    void addBookToFavorites(Long bookId, String userEmail);
+    void removeBookFromFavorites(Long bookId, String userEmail);
+    List<BookDto> getFavoriteBooks(String userEmail);
 }
