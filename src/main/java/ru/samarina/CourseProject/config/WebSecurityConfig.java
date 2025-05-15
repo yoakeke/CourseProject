@@ -28,6 +28,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/index").permitAll()
                         .requestMatchers("/users").hasRole("ADMIN")
                         .requestMatchers("/stores").hasRole("ADMIN")
+                        .requestMatchers("/books/favorites").hasRole("USER")
                         .anyRequest().permitAll())
                 .formLogin(
                         form -> form
@@ -39,9 +40,7 @@ public class WebSecurityConfig {
                         logout -> logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                 .permitAll()
-                )
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.accessDeniedPage("/403"));
+                );
         return http.build();
     }
 }

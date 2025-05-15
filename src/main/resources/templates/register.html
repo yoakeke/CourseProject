@@ -1,66 +1,82 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Book Tracker</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          crossorigin="anonymous">
+    <title>Регистрация</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<!-- Include Header -->
+
+<!-- Вставка шапки сайта -->
 <div th:replace="~{header :: header}"></div>
 
 <br/><br/><br/>
 <div class="container">
     <div class="row col-md-8 offset-md-2">
+
+        <!-- Карточка регистрации -->
         <div class="card">
             <div class="card-header">
-                <h2 class="text-center">Registration</h2>
+                <h2 class="text-center">Регистрация</h2>
             </div>
+
+            <!-- Сообщение о регистрации -->
             <div th:if="${param.success}">
                 <div class="alert alert-info">
-                    You have successfully registered our app!
+                    Вы успешно зарегистрировались!
                 </div>
             </div>
+
+            <!-- Форма регистрации -->
             <div class="card-body">
                 <form method="post" role="form" th:action="@{/register/save}" th:object="${user}">
+
                     <div class="form-group mb-3">
-                        <label class="form-label">First Name</label>
-                        <input class="form-control" id="firstName" name="firstName" placeholder="Enter first name"
+                        <label class="form-label">Имя</label>
+                        <input class="form-control" id="firstName" name="firstName" placeholder="Введите имя"
                                th:field="*{firstName}" type="text"/>
-                        <p th:errors="*{firstName}" class="text-danger" th:if="${#fields.hasErrors('firstName')}"></p>
+                        <p th:errors="*{firstName}" class="text-danger" th:if="${#fields.hasErrors('firstName')}">
+                            Пожалуйста, введите ваше имя
+                        </p>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label class="form-label">Last Name</label>
-                        <input class="form-control" id="lastName" name="lastName" placeholder="Enter last name"
+                        <label class="form-label">Фамилия</label>
+                        <input class="form-control" id="lastName" name="lastName" placeholder="Введите фамилию"
                                th:field="*{lastName}" type="text"/>
-                        <p th:errors="*{lastName}" class="text-danger" th:if="${#fields.hasErrors('lastName')}"></p>
+                        <p th:errors="*{lastName}" class="text-danger" th:if="${#fields.hasErrors('lastName')}">
+                            Пожалуйста, введите вашу фамилию
+                        </p>
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Email</label>
-                        <input class="form-control" id="email" name="email" placeholder="Enter email address"
+                        <input class="form-control" id="email" name="email" placeholder="Введите email"
                                th:field="*{email}" type="email"/>
-                        <p th:errors="*{email}" class="text-danger" th:if="${#fields.hasErrors('email')}"></p>
+                        <p th:errors="*{email}" class="text-danger" th:if="${#fields.hasErrors('email')}">
+                            Неверный формат email
+                        </p>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label class="form-label">Password</label>
-                        <input class="form-control" id="password" name="password" placeholder="Enter password"
+                        <label class="form-label">Пароль</label>
+                        <input class="form-control" id="password" name="password" placeholder="Введите пароль"
                                th:field="*{password}" type="password"/>
-                        <p th:errors="*{password}" class="text-danger" th:if="${#fields.hasErrors('password')}"></p>
+                        <p th:errors="*{password}" class="text-danger" th:if="${#fields.hasErrors('password')}">
+                            Пароль должен содержать минимум 6 символов
+                        </p>
                     </div>
+
                     <div class="form-group">
-                        <button class="btn btn-primary" type="submit">Register</button>
-                        <span>Already registered? <a th:href="@{/login}">Login here</a></span>
+                        <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
+                        <span>Уже зарегистрированы? <a th:href="@{/login}">Войдите сюда</a></span>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 </body>
 </html>

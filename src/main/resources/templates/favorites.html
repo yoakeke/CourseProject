@@ -2,32 +2,33 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>My Favorite Books</title>
+    <title>Избранное</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
-<!-- Header -->
+<!-- Вставка шапки сайта -->
 <div th:replace="~{header :: header}"></div>
 
 <div class="container mt-3">
-    <h2 class="mb-3">My Favorite Books</h2>
+    <h2 class="mb-3">Избранное</h2>
 
+    <!-- Таблица с избранными книгами -->
     <table class="table table-bordered table-hover">
         <thead class="table-dark">
         <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Store</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Actions</th>
+            <th>Название</th>
+            <th>Автор</th>
+            <th>Магазин</th>
+            <th>Цена</th>
+            <th>Количество</th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="book : ${books}">
-        <td th:text="${book.title}"></td>
+            <td th:text="${book.title}"></td>
             <td th:text="${book.author}"></td>
 
             <td>
@@ -57,8 +58,8 @@
                 <form th:action="@{/books/favorites/remove}" method="post">
                     <input type="hidden" name="bookId" th:value="${book.id}" />
                     <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Are you sure you want to remove this book from favorites?')">
-                        Remove
+                            onclick="return confirm('Вы уверены, что хотите удалить эту книгу из избранного?')">
+                        Удалить
                     </button>
                 </form>
             </td>

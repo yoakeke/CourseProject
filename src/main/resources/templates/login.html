@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Book Tracker</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          crossorigin="anonymous">
+    <title>Вход</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<!-- Include Header -->
+
+<!-- Вставка шапки сайта (header) -->
 <div th:replace="~{header :: header}"></div>
 
 <br/><br/>
@@ -17,34 +16,39 @@
     <div class="row">
         <div class="col-md-6 offset-md-3">
 
+            <!-- Сообщение об ошибке или выходе -->
             <div th:if="${param.error}">
-                <div class="alert alert-danger">Invalid Email or Password</div>
+                <div class="alert alert-danger">Неверный Email или пароль</div>
             </div>
             <div th:if="${param.logout}">
-                <div class="alert alert-success"> You have been logged out.</div>
+                <div class="alert alert-success">Вы вышли из системы.</div>
             </div>
 
+            <!-- Карточка формы входа -->
             <div class="card">
                 <div class="card-header">
-                    <h2 class="text-center">Login Form</h2>
+                    <h2 class="text-center">Вход</h2>
                 </div>
                 <div class="card-body">
+
                     <form method="post" role="form" th:action="@{/login}" class="form-horizontal">
+
                         <div class="form-group mb-3">
-                            <label class="control-label"> Email</label>
+                            <label class="control-label">Email</label>
                             <input type="text" id="username" name="username" class="form-control"
-                                   placeholder="Enter email address"/>
+                                   placeholder="Введите email"/>
                         </div>
 
                         <div class="form-group mb-3">
-                            <label class="control-label"> Password</label>
+                            <label class="control-label">Пароль</label>
                             <input type="password" id="password" name="password" class="form-control"
-                                   placeholder="Enter password"/>
+                                   placeholder="Введите пароль"/>
                         </div>
+
                         <div class="form-group mb-3">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                            <span> Not registered ?
-                                <a th:href="@{/register}">Register/Signup here</a>
+                            <button type="submit" class="btn btn-primary">Войти</button>
+                            <span> Нет аккаунта?
+                                <a th:href="@{/register}">Зарегистрируйтесь</a>
                             </span>
                         </div>
                     </form>
@@ -53,5 +57,6 @@
         </div>
     </div>
 </div>
+
 </body>
 </html>
