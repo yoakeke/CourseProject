@@ -3,13 +3,8 @@ package ru.samarina.CourseProject.entity;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 
 @Getter
 @Setter
@@ -24,16 +19,16 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @NotEmpty
+    @Column(nullable = false)
     private String firstName;
 
-    @NotEmpty
+    @Column(nullable = false)
     private String lastName;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -48,8 +43,8 @@ public class User {
     @ManyToMany
     @JoinTable(
             name = "user_favorites",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id")
+            joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
+            inverseJoinColumns = { @JoinColumn(name = "book_id", referencedColumnName = "id") }
     )
     private List<Book> favoriteBooks = new ArrayList<>();
 

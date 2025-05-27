@@ -2,10 +2,8 @@ package ru.samarina.CourseProject.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Getter
 @Setter
@@ -20,7 +18,7 @@ public class Store {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)

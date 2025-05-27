@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.samarina.CourseProject.dto.BookDto;
 import ru.samarina.CourseProject.service.BookService;
 import ru.samarina.CourseProject.service.StoreService;
-
 import java.security.Principal;
 import java.util.List;
 
@@ -22,6 +21,7 @@ public class BookController {
         this.storeService = storeService;
     }
 
+    // Отображение списка всех книг
     @GetMapping("/list-book")
     public String listBooks(Model model, Principal principal) {
         String userEmail = (principal != null) ? principal.getName() : null;
@@ -31,54 +31,49 @@ public class BookController {
         model.addAttribute("books", books);
         model.addAttribute("stores", storeService.getAllStores());
 
-        // Добавляем пустой BookDto для формы добавления
+        // Статус избранного для пользователей
         BookDto emptyBookDto = new BookDto();
-        emptyBookDto.setInFavorite(false); // по умолчанию не в избранном
+        emptyBookDto.setInFavorite(false); // По умолчанию не в избранном
         model.addAttribute("bookDto", emptyBookDto);
 
         return "list-book";
     }
 
+
+    // ФУНКЦИИ ДЛЯ АДМИНА
+
+    // Добавление новой книги
     @PostMapping("/add")
     public String addBook(@RequestParam String title,
                           @RequestParam String author,
-                          @RequestParam Long storeId,
-                          @RequestParam Double price,
-                          @RequestParam Integer quantity) {
-        bookService.addBookWithStore(title, author, storeId, price, quantity);
+                          @RequestParam List<Long> storeIds,
+                          @RequestParam List<Double> prices,
+                          @RequestParam List<Integer> quantities) {
+
+        bookService.addBookWithStores(title, author, storeIds, prices, quantities);
         return "redirect:/books/list-book";
     }
 
+    // Редактирование книги
+    @PostMapping("/edit")
+    public String editBook(@ModelAttribute BookDto book,
+                           @RequestParam List<Long> storeIds,
+                           @RequestParam List<Double> prices,
+                           @RequestParam List<Integer> quantities) {
 
-    @PostMapping("books/delete")
+        bookService.updateBookWithStores(book, storeIds, prices, quantities);
+        return "redirect:/books/list-book";
+    }
+
+    // Удаление книги
+    @PostMapping("/delete")
     public String deleteBook(@RequestParam Long id) {
         bookService.deleteBook(id);
         return "redirect:/books/list-book";
     }
 
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        BookDto book = bookService.getBookById(id);
-        model.addAttribute("book", book);
-        model.addAttribute("stores", storeService.getAllStores());
-        return "list-book";
-    }
 
-    @PostMapping("/edit")
-    public String editBook(@ModelAttribute BookDto book,
-                           @RequestParam Long storeId,
-                           @RequestParam Double price,
-                           @RequestParam Integer quantity) {
-        bookService.updateBookWithStore(book, storeId, price, quantity);
-        return "redirect:/books/list-book";
-    }
-
-    @GetMapping("/selectStore")
-    public String selectStore(@RequestParam Long bookId, @RequestParam Long storeId, Model model) {
-        model.addAttribute("books", bookService.findAllBooksWithSelectedStore(bookId, storeId));
-        model.addAttribute("stores", storeService.getAllStores());
-        return "list-book";
-    }
+    // ФУНКЦИИ ДЛЯ ПОЛЬЗОВАТЕЛЕЙ
 
     // Добавить книгу в избранное
     @PostMapping("/favorites/add")
@@ -101,6 +96,5 @@ public class BookController {
         model.addAttribute("books", favorites);
         return "favorites";
     }
-
 
 }

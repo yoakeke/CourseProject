@@ -6,21 +6,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-
 <body>
-<!-- Вставка шапки сайта -->
+
+<!-- Вставка шапки -->
 <div th:replace="~{header :: header}"></div>
 
 <div class="container mt-3">
-<!-- Заголовок и кнопка добавления книги для админа -->
+
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h2>Список книг</h2>
-        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBookModal" sec:authorize="hasRole('ROLE_ADMIN')">
-            Добавить новую книгу
-        </button>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBookModal"
+                sec:authorize="hasRole('ROLE_ADMIN')">Добавить новую книгу</button>
     </div>
 
-<!-- Таблица книг -->
+    <!-- Таблица -->
     <table class="table table-bordered table-hover">
         <thead class="table-dark">
         <tr>
@@ -36,7 +35,6 @@
         <tr th:each="book : ${books}">
             <td th:text="${book.title}"></td>
             <td th:text="${book.author}"></td>
-
             <td>
                 <select class="form-select form-select-sm"
                         th:id="'storeSelect_' + ${book.id}"
@@ -45,44 +43,30 @@
                             th:value="${store.storeId}"
                             th:data-price="${store.price}"
                             th:data-quantity="${store.quantity}"
-                            th:text="${store.storeName}">
-                    </option>
+                            th:text="${store.storeName}"></option>
                 </select>
             </td>
-
             <td>
-                <span th:id="'price_' + ${book.id}"
-                      th:text="${#lists.isEmpty(book.stores) ? '—' : book.stores.get(0).price}"></span>
+                <span th:id="'price_' + ${book.id}" th:text="${#lists.isEmpty(book.stores) ? '—' : book.stores.get(0).price}"></span>
             </td>
-
             <td>
-                <span th:id="'quantity_' + ${book.id}"
-                      th:text="${#lists.isEmpty(book.stores) ? '—' : book.stores.get(0).quantity}"></span>
+                <span th:id="'quantity_' + ${book.id}" th:text="${#lists.isEmpty(book.stores) ? '—' : book.stores.get(0).quantity}"></span>
             </td>
             <td sec:authorize="hasRole('ADMIN') or hasRole('USER')">
                 <div sec:authorize="hasRole('ROLE_ADMIN')" class="d-flex align-items-center gap-2">
-                    <form th:action="@{books/delete}" method="post" th:object="${book}">
+                    <form th:action="@{/books/delete}" method="post">
                         <input type="hidden" name="id" th:value="${book.id}"/>
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Вы уверены, что хотите удалить эту книгу?')">
-                            Удалить
-                        </button>
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Вы уверены, что хотите удалить эту книгу?')">Удалить</button>
                     </form>
-
-                    <button class="btn btn-warning btn-sm"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editBookModal"
-                            th:attr="data-id=${book.id},
-                                         data-title=${book.title},
-                                         data-author=${book.author},
-                                         data-store=${#lists.isEmpty(book.stores) ? '' : book.stores.get(0).storeId},
-                                         data-price=${#lists.isEmpty(book.stores) ? '' : book.stores.get(0).price},
-                                         data-quantity=${#lists.isEmpty(book.stores) ? '' : book.stores.get(0).quantity}">
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editBookModal"
+                            th:attr="data-id=${book.id}, data-title=${book.title}, data-author=${book.author}">
                         Редактировать
                     </button>
                 </div>
                 <div sec:authorize="hasRole('ROLE_USER')">
                     <form th:if="${!book.inFavorite}" th:action="@{/books/favorites/add}" method="post">
-                        <input type="hidden" name="bookId" th:value="${book.id}" />
+                        <input type="hidden" name="bookId" th:value="${book.id}"/>
                         <button type="submit" class="btn btn-success btn-sm">В избранное</button>
                     </form>
                     <span th:unless="${!book.inFavorite}" class="text-success fst-italic">В избранном</span>
@@ -93,9 +77,9 @@
     </table>
 </div>
 
-<!-- Модальное окно добавления книги -->
+<!-- Добавление книги -->
 <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form th:action="@{/books/add}" method="post">
                 <div class="modal-header">
@@ -107,31 +91,14 @@
                         <label for="title" class="form-label">Название</label>
                         <input type="text" class="form-control" id="title" name="title" required>
                     </div>
-
                     <div class="mb-3">
                         <label for="author" class="form-label">Автор</label>
                         <input type="text" class="form-control" id="author" name="author" required>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="storeId" class="form-label">Магазин</label>
-                        <select class="form-select" id="storeId" name="storeId" required>
-                            <option value="" disabled selected>Выберите магазин</option>
-                            <option th:each="store : ${stores}" th:value="${store.id}" th:text="${store.name}"></option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="price" class="form-label">Цена</label>
-                        <input type="number" class="form-control" id="price" name="price" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="quantity" class="form-label">Количество</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity" required>
-                    </div>
+                    <div id="storeContainer"></div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
+                            onclick="addStoreEntry('storeContainer')">+ Добавить магазин</button>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Отмена</button>
                     <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
@@ -141,72 +108,91 @@
     </div>
 </div>
 
-<!-- Модальное окно редактирования книги -->
+<!-- Редактирование книги -->
 <div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form th:action="@{/books/edit}" method="post">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editBookModalLabel">Редактировать</h5>
+                    <h5 class="modal-title" id="editBookModalLabel">Редактировать книгу</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="id" id="editBookId">
-
+                    <input type="hidden" id="editBookId" name="id">
                     <div class="mb-3">
                         <label for="editBookTitle" class="form-label">Название</label>
                         <input type="text" class="form-control" id="editBookTitle" name="title" required>
                     </div>
-
                     <div class="mb-3">
                         <label for="editBookAuthor" class="form-label">Автор</label>
                         <input type="text" class="form-control" id="editBookAuthor" name="author" required>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="editBookStore" class="form-label">Магазин</label>
-                        <select class="form-select" id="editBookStore" name="storeId" required>
-                            <option th:each="store : ${stores}"
-                                    th:value="${store.id}"
-                                    th:text="${store.name}">
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="editBookPrice" class="form-label">Цена</label>
-                        <input type="number" class="form-control" id="editBookPrice" name="price" step="0.01" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="editBookQuantity" class="form-label">Количество</label>
-                        <input type="number" class="form-control" id="editBookQuantity" name="quantity" required>
-                    </div>
+                    <div id="editStoreContainer"></div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
+                            onclick="addStoreEntry('editStoreContainer')">+ Добавить магазин</button>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Отмена</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Обновить</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Скрипт: обновление цены и количества -->
+<!-- Скрытый шаблон опций магазинов -->
+<select id="storeSelectTemplate" class="d-none">
+    <option value="" disabled selected>Выберите магазин</option>
+    <option th:each="store : ${stores}" th:value="${store.id}" th:text="${store.name}"></option>
+</select>
+
+<!-- Скрипт: динамическое добавление магазина -->
+<script>
+    function addStoreEntry(containerId) {
+        const container = document.getElementById(containerId);
+        const selectTemplate = document.getElementById("storeSelectTemplate");
+        const options = selectTemplate.innerHTML;
+
+        const div = document.createElement("div");
+        div.className = "store-entry mb-3 border p-2 position-relative";
+
+        div.innerHTML = `
+            <label class="form-label">Магазин</label>
+            <button type="button" class="btn btn-danger btn-sm float-end" onclick="removeStoreEntry(this)">Удалить</button>
+            <select class="form-select mb-2" name="storeIds" required>
+                ${options}
+            </select>
+            <input type="number" name="prices" class="form-control mb-2" placeholder="Цена" step="0.1" required>
+            <input type="number" name="quantities" class="form-control" placeholder="Количество" step="1" required>
+        `;
+        container.appendChild(div);
+    }
+
+    function removeStoreEntry(button) {
+        const entry = button.closest('.store-entry');
+        const container = entry.closest('[id]');
+        const entries = container.querySelectorAll('.store-entry');
+        if (entries.length > 1) {
+            entry.remove();
+        } else {
+            alert("Должен быть хотя бы один магазин.");
+        }
+    }
+</script>
+
+<!-- Обновление цены и количества -->
 <script>
     function updatePriceAndQuantity(bookId) {
         const select = document.getElementById('storeSelect_' + bookId);
         const selectedOption = select.options[select.selectedIndex];
         const price = selectedOption.getAttribute('data-price');
         const quantity = selectedOption.getAttribute('data-quantity');
-
         document.getElementById('price_' + bookId).textContent = price ? price : '—';
         document.getElementById('quantity_' + bookId).textContent = quantity ? quantity : '—';
     }
 </script>
 
-<!-- Скрипт: заполнение модального окна редактирования -->
+<!-- Очищение и подготовка формы редактирования -->
 <script>
     const editModal = document.getElementById('editBookModal');
     editModal.addEventListener('show.bs.modal', function (event) {
@@ -214,9 +200,20 @@
         document.getElementById('editBookId').value = button.getAttribute('data-id');
         document.getElementById('editBookTitle').value = button.getAttribute('data-title');
         document.getElementById('editBookAuthor').value = button.getAttribute('data-author');
-        document.getElementById('editBookStore').value = button.getAttribute('data-store');
-        document.getElementById('editBookPrice').value = button.getAttribute('data-price');
-        document.getElementById('editBookQuantity').value = button.getAttribute('data-quantity');
+
+        const container = document.getElementById('editStoreContainer');
+        container.innerHTML = '';
+        addStoreEntry('editStoreContainer');
+    });
+</script>
+
+<!-- Автодобавление первого магазина при открытии модального окна добавления -->
+<script>
+    const addModal = document.getElementById('addBookModal');
+    addModal.addEventListener('show.bs.modal', function () {
+        const container = document.getElementById('storeContainer');
+        container.innerHTML = '';
+        addStoreEntry('storeContainer');
     });
 </script>
 

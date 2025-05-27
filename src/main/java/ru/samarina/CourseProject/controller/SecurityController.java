@@ -8,11 +8,9 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.samarina.CourseProject.dto.BookDto;
 import ru.samarina.CourseProject.dto.UserDto;
 import ru.samarina.CourseProject.entity.Role;
 import ru.samarina.CourseProject.entity.User;
-import ru.samarina.CourseProject.service.BookService;
 import ru.samarina.CourseProject.service.RoleService;
 import ru.samarina.CourseProject.service.UserService;
 
@@ -24,27 +22,28 @@ import java.util.List;
 public class SecurityController {
 
     private UserService userService;
-    private BookService bookService;
     private RoleService roleService;
     private PasswordEncoder passwordEncoder;
     @Autowired
-    public SecurityController(UserService userService, BookService bookService, RoleService roleService) {
+    public SecurityController(UserService userService, RoleService roleService) {
         this.userService = userService;
-        this.bookService = bookService;
         this.roleService = roleService;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
+    // Показ домашней страницы
     @GetMapping("/index")
     public String home() {
         return "index";
     }
 
+    // Показ формы логина
     @GetMapping("/login")
     public String login() {
         return "login";
     }
 
+    // Показ формы регистрации
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         UserDto user = new UserDto();
@@ -52,6 +51,7 @@ public class SecurityController {
         return "register";
     }
 
+    // Регистрация пользователей
     @PostMapping("/register/save")
     public String registration(@Valid @ModelAttribute("user") UserDto userDto,
                                BindingResult result,
@@ -75,6 +75,7 @@ public class SecurityController {
         return "redirect:/register?success";
     }
 
+    // Находим всех пользователей и роли
     @GetMapping("/users")
     public String getUsers(Model model) {
         List<Role> roles = roleService.findAllRoles();
@@ -84,36 +85,39 @@ public class SecurityController {
         return "users";
     }
 
+    // Меняем роль пользователю
     @PostMapping("/updateRole")
     public String updateUserRole(@RequestParam Long userId,
                                  @RequestParam String role) {
         User user = userService.findById(userId);
         if (user != null) {
-            Role roleEntity = roleService.findByName(role);  // получаем роль по имени
+            Role roleEntity = roleService.findByName(role);  // Получаем роль по имени
             List<Role> newRoles = new ArrayList<>();
-            newRoles.add(roleEntity);  // создаем новый список с единственной ролью
-            user.setRoles(newRoles);  // устанавливаем роль пользователю
-            userService.saveUserEntity(user);  // сохраняем изменения
+            newRoles.add(roleEntity);  // Создаем новый список с единственной ролью
+            user.setRoles(newRoles);  // Устанавливаем роль пользователю
+            userService.saveUserEntity(user);  // Сохраняем изменения
         }
         return "redirect:/users";
     }
 
+    // Админ создает пользователя
     @PostMapping("/addUser")
     public String addUser(@RequestParam String firstName,
                           @RequestParam String lastName,
                           @RequestParam String email,
                           @RequestParam String role) {
-        Role roleEntity = roleService.findByName(role);  // получаем роль по имени
+        Role roleEntity = roleService.findByName(role);  // Получаем роль по имени
         User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
-        user.setPassword(passwordEncoder.encode("defaultPassword"));  // Заменить или сгенерировать пароль
-        user.setRoles(Collections.singletonList(roleEntity));  // устанавливаем роль пользователю
+        user.setPassword(passwordEncoder.encode("defaultPassword"));  // Дефолтный пароль для созданных пользователей админом
+        user.setRoles(Collections.singletonList(roleEntity));  // Устанавливаем роль пользователю
         userService.saveUserEntity(user);
         return "redirect:/users";
     }
 
+    // Удаляем пользователя
     @PostMapping("/users/delete")
     public String deleteUserPost(@RequestParam Long id) {
         userService.deleteUser(id);

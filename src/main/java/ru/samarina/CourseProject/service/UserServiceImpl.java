@@ -8,8 +8,6 @@ import ru.samarina.CourseProject.entity.Role;
 import ru.samarina.CourseProject.entity.User;
 import ru.samarina.CourseProject.repository.RoleRepository;
 import ru.samarina.CourseProject.repository.UserRepository;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +25,7 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Регистрация пользователя
     @Override
     public void saveUser(UserDto userDto) {
         User user = new User();
@@ -35,7 +34,9 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
+        // Все пользователи имеют роль USER
         Role role = roleRepository.findByName("USER");
+        // Если ролей нет - это первый пользователь, присваиваем роль админа
         if (role == null) {
             role = checkRoleExist();
         }
@@ -43,11 +44,13 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    // Находим пользователя по почте
     @Override
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    // Находим всех пользователей
     @Override
     public List<UserDto> findAllUsers() {
         List<User> users = userRepository.findAll();
@@ -56,6 +59,7 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    // Переносит данные из User в UserDto для отображения
     private UserDto mapToUserDto(User user) {
         UserDto userDto = new UserDto();
         userDto.setId(user.getId());
@@ -67,22 +71,26 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+    // Находим пользователя по ID
     @Override
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
+    // Админ добавляет пользователя
     @Override
     public void saveUserEntity(User user) {
         userRepository.save(user);
     }
 
+    // Первый пользователь - админ
     private Role checkRoleExist() {
         Role role = new Role();
         role.setName("ROLE_ADMIN");
         return roleRepository.save(role);
     }
 
+    // Удаляем пользователя
     @Override
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));

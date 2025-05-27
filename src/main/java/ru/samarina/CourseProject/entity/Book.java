@@ -1,12 +1,7 @@
 package ru.samarina.CourseProject.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,15 +15,17 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
 
-    @NotEmpty(message = "Title should not be empty.")
+    @Column(nullable = false)
     private String title;
 
-    @NotEmpty(message = "Author should not be empty.")
+    @Column(nullable = false)
     private String author;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
-    private List<BookStore> bookStores = new ArrayList<>(); // Используем List вместо Set
+    private List<BookStore> bookStores = new ArrayList<>();
+
 
 }
